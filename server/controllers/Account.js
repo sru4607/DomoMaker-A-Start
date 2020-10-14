@@ -3,11 +3,13 @@ const models = require('../models');
 const { Account } = models;
 
 const loginPage = (req, res) => {
-  res.render('login');
+  let token = req.csrfToken();
+  res.render('login', {csrfToken: token});
 };
 
 const signupPage = (req, res) => {
-  res.render('signup');
+  let token = req.csrfToken();
+  res.render('signup', {csrfToken: token});
 };
 
 const logout = (req, res) => {
