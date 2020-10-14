@@ -9,8 +9,8 @@ const makerPage = (req, res) => {
       console.log(err);
       return res.status(400).json({ error: 'An error occured' });
     }
-    let token = req.csrfToken();
-    return res.render('app', {csrfToken: token, domos: docs });
+    const token = req.csrfToken();
+    return res.render('app', { csrfToken: token, domos: docs });
   });
 };
 
