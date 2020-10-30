@@ -1,4 +1,3 @@
-
 const models = require('../models');
 
 const { Domo } = models;
@@ -15,14 +14,14 @@ const makerPage = (req, res) => {
 };
 
 const makeDomo = (req, res) => {
-  console.log(req);
-  if (!req.body.name || !req.body.age) {
-    return res.status(400).json({ error: 'RAWR! Both name and age are required' });
+  if (!req.body.name || !req.body.age || !req.body.favoriteColor) {
+    return res.status(400).json({ error: 'RAWR! All fields are required' });
   }
 
   const domoData = {
     name: req.body.name,
     age: req.body.age,
+    favoriteColor: req.body.favoriteColor,
     owner: req.session.account._id,
   };
 
@@ -49,15 +48,28 @@ const getDomos = (request, response) => {
   const res = response;
 
   return Domo.DomoModel.findByOwner(req.session.account._id, (err, docs) => {
-    if(err){
+    if (err) {
       console.log(err);
-      return res.status(400).json({error:'An error occured'});
+      return res.status(400).json({ error: 'An error occured' });
     }
 
-    return res.json({domos:docs});
+    return res.json({ domos: docs });
   });
 };
 
+const removeDomo = (request, response) => {
+  const req = request;
+  const res = response;
+  return Domo.DomoModel.removeByData(req.query, (err, docs) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'An error occured' });
+    }
+    return res.json({ res: docs });
+  });
+};
+
+module.exports.removeDomo = removeDomo;
 module.exports.makerPage = makerPage;
 module.exports.getDomos = getDomos;
 module.exports.make = makeDomo;

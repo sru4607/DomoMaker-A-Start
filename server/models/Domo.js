@@ -9,7 +9,7 @@ let DomoModel = {};
 // converts string ID to real mongo ID
 const convertId = mongoose.Types.ObjectId;
 const setName = (name) => _.escape(name).trim();
-
+const setColor = (color) => _.escape(color).trim();
 const DomoSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -22,6 +22,13 @@ const DomoSchema = new mongoose.Schema({
     type: Number,
     min: 0,
     required: true,
+  },
+
+  favoriteColor: {
+    type: String,
+    required: true,
+    trim: true,
+    set: setColor,
   },
 
   owner: {
@@ -39,6 +46,7 @@ const DomoSchema = new mongoose.Schema({
 DomoSchema.statics.toAPI = (doc) => ({
   name: doc.name,
   age: doc.age,
+  favoriteColor: doc.favoriteColor,
 });
 
 DomoSchema.statics.findByOwner = (ownerId, callback) => {
@@ -46,10 +54,15 @@ DomoSchema.statics.findByOwner = (ownerId, callback) => {
     owner: convertId(ownerId),
   };
 
-  return DomoModel.find(search).select('name age').lean().exec(callback);
+  return DomoModel.find(search).select('name age favoriteColor').lean().exec(callback);
+};
+
+DomoSchema.statics.removeByData = (data, callback) => {
+  DomoModel.findByIdAndDelete(data.id).exec(callback);
 };
 
 DomoModel = mongoose.model('Domo', DomoSchema);
+
 
 module.exports.DomoModel = DomoModel;
 module.exports.DomoSchema = DomoSchema;
